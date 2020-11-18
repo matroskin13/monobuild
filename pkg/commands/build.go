@@ -3,10 +3,17 @@ package commands
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"monobuild/internal/env"
+	"monobuild/internal/errors"
+	"monobuild/internal/files"
+	"monobuild/internal/slice"
+	"monobuild/pkg/build"
 	"monobuild/pkg/config"
 	"monobuild/pkg/deps"
+	"monobuild/pkg/git"
 	"os"
 	"path"
+	"strings"
 )
 
 func GetBuild() *cobra.Command {
@@ -20,22 +27,65 @@ func GetBuild() *cobra.Command {
 				return fmt.Errorf("cannot get pwd path: %w", err)
 			}
 
-			configPath := path.Join(pwd, entryPath, ".monobuild.yml")
+			applicationPath := pwd
+
+			if entryPath != "" {
+				applicationPath = path.Join(pwd, entryPath)
+				if strings.Index(entryPath, "/") == 0 {
+					applicationPath = entryPath
+				}
+			}
+
+			configPath := path.Join(applicationPath, ".monobuild.yml")
+
+			if !files.FileExists(configPath) {
+				return errors.NewRichError(fmt.Sprintf("Configuration file not found in %s, please specity correct path", configPath), nil)
+			}
 
 			cfg, err := config.ParseConfigFromFile(configPath)
 			if err != nil {
-				return fmt.Errorf("cannot parse config file: %w", err)
+				return errors.NewRichError("Incorrect format of configuration file", err)
+			}
+
+			repoPath, err := git.ResolveGitPath(applicationPath)
+			if err != nil {
+				return err
+			}
+
+			dock := build.NewDocker()
+
+			diff, err := git.GetDiffFiles(repoPath)
+			if err != nil {
+				return err
 			}
 
 			for packName, pack := range cfg.Packages {
-				fullPathPackage := path.Join(pwd, entryPath, packName, pack.Entry)
+				fullPathPackage := path.Join(applicationPath, packName, pack.Entry)
 
 				depsFiles, err := deps.GetDepsAsFiles(fullPathPackage)
 				if err != nil {
 					return fmt.Errorf("cannot load deps: %w", err)
 				}
 
-				fmt.Println(depsFiles)
+				needBuild := len(slice.Intersection(diff, depsFiles)) > 0
+				image, err := env.ParseTemplateWithEnv(pack.Build.Docker.Image)
+				if err != nil {
+					return fmt.Errorf("invalid template: %w", err)
+				}
+
+				if needBuild {
+					fmt.Printf("Package %q has changed, build has started...\r\n", packName)
+
+					if pack.Build.Docker != nil {
+						if err := dock.Build(cmd.Context(), applicationPath, path.Join(packName, pack.Entry), image); err != nil {
+							return fmt.Errorf("cannot build image: %w", err)
+						}
+
+						fmt.Printf("Successfuly build docker image and push %q with image %q\r\n", packName, image)
+					}
+				} else {
+					fmt.Printf("Package %q not changed \r\n", packName)
+				}
 			}
 
 			return nil

@@ -10,7 +10,7 @@ type Config struct {
 	Packages map[string]struct {
 		Entry string
 		Build struct {
-			Docker struct {
+			Docker *struct {
 				Image string
 			}
 		}

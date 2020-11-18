@@ -7,6 +7,7 @@ func GetMainCommand() *cobra.Command {
 		Use: "monobuild for monorepo",
 	}
 
+	command.SilenceUsage = true
 	command.AddCommand(GetVersionCommand(), GetBuild())
 
 	return command

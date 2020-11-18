@@ -6,7 +6,10 @@ import (
 )
 
 func GetDepsAsFiles(inputPackagePath string) ([]string, error) {
-	cfg := &packages.Config{Mode: packages.NeedSyntax | packages.NeedImports | packages.NeedName | packages.NeedFiles}
+	cfg := &packages.Config{
+		Mode: packages.NeedSyntax | packages.NeedImports | packages.NeedName | packages.NeedFiles,
+		Dir:  inputPackagePath,
+	}
 	pkgs, err := packages.Load(cfg, inputPackagePath)
 	if err != nil {
 		return nil, err
