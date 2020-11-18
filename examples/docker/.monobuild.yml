@@ -1,0 +1,6 @@
+packages:
+  packageA:
+    entry: cmd
+    build:
+      docker:
+        image: "packageA/{{.TAG}}"
