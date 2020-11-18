@@ -13,12 +13,14 @@ A simple tool for GO monorepo:
 
 Imagine we have a project with simple structure:
 
+```bash
 project
 ├── packageB
 │   └── greeting.go
 ├── packageA
    └── cmd
        └── main.go
+```
        
 packageB/greeting.go:
 
