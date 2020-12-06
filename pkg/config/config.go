@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"monobuild/internal/errors"
+	"monobuild/internal/files"
+	"path"
 )
+
+const DefaultConfigName = ".monobuild.yml"
 
 type Config struct {
 	Packages map[string]struct {
@@ -30,4 +35,14 @@ func ParseConfigFromFile(path string) (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+func ParseDefaultConfig(applicationPath string) (*Config, error) {
+	configPath := path.Join(applicationPath, DefaultConfigName)
+
+	if !files.FileExists(configPath) {
+		return nil, errors.NewRichError(fmt.Sprintf("Configuration file not found in %s, please specity correct path", configPath), nil)
+	}
+
+	return ParseConfigFromFile(path.Join(applicationPath, DefaultConfigName))
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 	"monobuild/internal/env"
 	"monobuild/internal/errors"
-	"monobuild/internal/files"
 	"monobuild/internal/slice"
 	"monobuild/pkg/build"
 	"monobuild/pkg/config"
@@ -36,13 +35,7 @@ func GetBuild() *cobra.Command {
 				}
 			}
 
-			configPath := path.Join(applicationPath, ".monobuild.yml")
-
-			if !files.FileExists(configPath) {
-				return errors.NewRichError(fmt.Sprintf("Configuration file not found in %s, please specity correct path", configPath), nil)
-			}
-
-			cfg, err := config.ParseConfigFromFile(configPath)
+			cfg, err := config.ParseDefaultConfig(applicationPath)
 			if err != nil {
 				return errors.NewRichError("Incorrect format of configuration file", err)
 			}
