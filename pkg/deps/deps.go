@@ -1,27 +1,61 @@
 package deps
 
 import (
+	"fmt"
+	"golang.org/x/mod/modfile"
 	"golang.org/x/tools/go/packages"
+	"io/ioutil"
+	"monobuild/pkg/git"
 	"strings"
 )
 
 func GetDepsAsFiles(inputPackagePath string) ([]string, error) {
-	cfg := &packages.Config{
-		Mode: packages.NeedSyntax | packages.NeedImports | packages.NeedName | packages.NeedFiles,
-		Dir:  inputPackagePath,
-	}
-	pkgs, err := packages.Load(cfg, inputPackagePath)
+	pkg, err := loadFirstPackage(inputPackagePath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot load packages: %w", err)
 	}
 
-	result := extractPackageFiles(pkgs[0])
+	result := extractPackageFiles(pkg)
 
-	for _, imp := range pkgs[0].Imports {
+	for _, imp := range pkg.Imports {
 		result = append(result, extractPackageFiles(imp)...)
 	}
 
 	return result, nil
+}
+
+func PackageChangeDeps(inputPackagePath string, revision string) (bool, []*modfile.Require, error) {
+	pkg, err := loadFirstPackage(inputPackagePath)
+	if err != nil {
+		return false, nil, fmt.Errorf("cannot load packages: %w", err)
+	}
+
+	currentGoModFile, err := ioutil.ReadFile(pkg.Module.GoMod)
+	if err != nil {
+		return false, nil, err
+	}
+
+	// TODO need for git show (relative path)
+	relativeGoModPath := strings.Replace(pkg.Module.GoMod, pkg.Module.Dir+"/", "", 1)
+
+	oldGoModFile, err := git.GetOldFile(inputPackagePath, relativeGoModPath, revision)
+	if err != nil {
+		return false, nil, fmt.Errorf("cannot get old version of go.mod: %w", err)
+	}
+
+	currentGoMod, err := modfile.Parse("go.mod", currentGoModFile, nil)
+	if err != nil {
+		return false, nil, fmt.Errorf("cannot convert current file to go.mod: %w", err)
+	}
+
+	oldGoMod, err := modfile.Parse("go.mod", oldGoModFile, nil)
+	if err != nil {
+		return false, nil, fmt.Errorf("cannot convert old file to go.mod: %w", err)
+	}
+
+	diff := DiffRequire(currentGoMod.Require, oldGoMod.Require)
+
+	return len(diff) > 0, diff, nil
 }
 
 func extractPackageFiles(pack *packages.Package) []string {
@@ -35,4 +69,17 @@ func extractPackageFiles(pack *packages.Package) []string {
 	}
 
 	return result
+}
+
+func loadFirstPackage(inputPackagePath string) (*packages.Package, error) {
+	cfg := &packages.Config{
+		Mode: packages.NeedSyntax | packages.NeedImports | packages.NeedName | packages.NeedFiles | packages.NeedModule,
+		Dir:  inputPackagePath,
+	}
+	pkgs, err := packages.Load(cfg, inputPackagePath)
+	if err != nil {
+		return nil, err
+	}
+
+	return pkgs[0], nil
 }

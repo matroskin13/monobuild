@@ -12,12 +12,15 @@ import (
 const DefaultConfigName = ".monobuild.yml"
 
 type Config struct {
-	Packages map[string]struct {
-		Entry string
-		Build struct {
-			Docker *struct {
-				Image string
-			}
+	Packages map[string]Package
+}
+
+type Package struct {
+	Entry     string
+	FullEntry string
+	Build     struct {
+		Docker *struct {
+			Image string
 		}
 	}
 }

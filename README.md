@@ -2,14 +2,11 @@
 
 A simple tool for GO monorepo:
 
-- Analyze application dependencies and build only changes packages (by git diff)
-- Automatically push changed packages to docker registry
-- (InProgress) Generate gitlab CI config
-- (InProgress) Watch mode for development
+- Automatically analyze package dependencies (local files&go.mod) in monorepo, and report for changes (by git diff)
 
 ## Install
 
-## Build only changes packages
+## Usage
 
 Imagine we have a project with simple structure:
 
@@ -47,26 +44,34 @@ func main() {
 }
 ```
 
-Package A depends on package B, and we want to build Package A when changes code of Package A and code of Package B. 
+### Changes command
 
-Monobuild will automatically detect the dependencies for package A by git diff, and build it.
+Change the greeting "Hello world" to "Hello Earth", and run command:
 
-First, make simple config for our application:
+```shell script
+monobuild --module packageA/cmd changes
+
+== Changes for package ==
+dependency file: /goexample/packageB/greeting.go
+``` 
+
+The Monobuild automatically analyze your module for dependencies, and check dependencies for any version changes.
+
+### Use config
+
+Create a .monobuild.yml in root directory of monorepo:
 
 ```yaml
 packages:
   packageA:
     entry: cmd
-    build:
-      docker:
-        image: "package-a"
 ```
 
-and run command:
+And run any command:
 
 ```shell script
-$ monobuild build
-$ docker run package-a
-Hello world
-```
+monobuild changes
 
+== Changes for packageA ==
+dependency file: /Users/valentin/goexample/packageB/greeting.go
+```

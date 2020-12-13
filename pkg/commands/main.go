@@ -8,7 +8,8 @@ func GetMainCommand() *cobra.Command {
 	}
 
 	command.SilenceUsage = true
-	command.AddCommand(GetVersionCommand(), GetBuild(), GetWatch())
+
+	command.AddCommand(GetVersionCommand(), GetBuild(), GetWatch(), GetHasChangesCommand())
 
 	return command
 }
