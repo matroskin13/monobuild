@@ -59,7 +59,7 @@ The Monobuild automatically analyze your module for dependencies, and check depe
 
 ### Use config
 
-Create .monobuild.yml in root directory of monorepo:
+Create a .monobuild.yml in root directory of monorepo:
 
 ```yaml
 packages:
