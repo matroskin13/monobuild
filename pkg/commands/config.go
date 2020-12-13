@@ -17,6 +17,7 @@ type configuration struct {
 	repoPath        string
 	diffFiles       []string
 	revision        string
+	pwd             string
 }
 
 func setupConfigurationHook(cmd *cobra.Command) (*configuration, func(cmd *cobra.Command, args []string) error) {
@@ -79,6 +80,7 @@ func setupConfigurationHook(cmd *cobra.Command) (*configuration, func(cmd *cobra
 			repoPath:        repoPath,
 			diffFiles:       diff,
 			revision:        revision,
+			pwd:             pwd,
 		}
 
 		return nil

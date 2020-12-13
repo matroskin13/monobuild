@@ -1,14 +1,21 @@
 package commands
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/spf13/cobra"
+	"html/template"
+	"io/ioutil"
+	"monobuild/internal/errors"
 	"monobuild/internal/slice"
 	"monobuild/pkg/deps"
 	"path"
 )
 
 func GetHasChangesCommand() *cobra.Command {
+	var useTemplate string
+	var outTemplateName string
+
 	command := &cobra.Command{
 		Use:   "changes",
 		Short: "changes",
@@ -19,6 +26,18 @@ func GetHasChangesCommand() *cobra.Command {
 	command.PreRunE = preRunConf
 	command.RunE = func(cmd *cobra.Command, args []string) error {
 		buildMap := map[string][]string{}
+
+		var outTemplate []byte
+		var resultTemplate bytes.Buffer
+
+		if useTemplate != "" {
+			templateFile, err := ioutil.ReadFile(path.Join(conf.pwd, useTemplate))
+			if err != nil {
+				return errors.NewRichError("cannot read template file", err)
+			}
+
+			outTemplate = templateFile
+		}
 
 		for packName, pack := range conf.cfg.Packages {
 			packName = packName
@@ -52,6 +71,21 @@ func GetHasChangesCommand() *cobra.Command {
 				}
 
 				buildMap[packName] = report
+
+				if useTemplate != "" {
+					tpl, err := template.New("").Parse(string(outTemplate))
+					if err != nil {
+						return err
+					}
+
+					if err := tpl.Execute(&resultTemplate, map[string]interface{}{
+						"serviceName": packName,
+					}); err != nil {
+						return err
+					}
+
+					resultTemplate.Write([]byte("\r\n\r\n"))
+				}
 			}
 		}
 
@@ -64,8 +98,17 @@ func GetHasChangesCommand() *cobra.Command {
 			}
 		}
 
+		if useTemplate != "" {
+			if err := ioutil.WriteFile(path.Join(conf.pwd, outTemplateName), resultTemplate.Bytes(), 0644); err != nil {
+				return err
+			}
+		}
+
 		return nil
 	}
+
+	command.Flags().StringVar(&useTemplate, "use-template", "", "use property for generate template")
+	command.Flags().StringVar(&outTemplateName, "out-template", "", "specify output template name")
 
 	return command
 }
