@@ -44,12 +44,12 @@ func main() {
 }
 ```
 
-### Has changes command
+### Changes command
 
 Change the greeting "Hello world" to "Hello Earth", and run command:
 
 ```shell script
-monobuild --module packageA/cmd has-changes
+monobuild --module packageA/cmd changes
 
 == Changes for package ==
 dependency file: /goexample/packageB/greeting.go
@@ -70,7 +70,7 @@ packages:
 And run any command:
 
 ```shell script
-monobuild has-changes
+monobuild changes
 
 == Changes for packageA ==
 dependency file: /Users/valentin/goexample/packageB/greeting.go

@@ -10,8 +10,8 @@ import (
 
 func GetHasChangesCommand() *cobra.Command {
 	command := &cobra.Command{
-		Use:   "has-changes",
-		Short: "has changes",
+		Use:   "changes",
+		Short: "changes",
 	}
 
 	conf, preRunConf := setupConfigurationHook(command)
