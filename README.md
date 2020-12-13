@@ -56,3 +56,22 @@ dependency file: /goexample/packageB/greeting.go
 ``` 
 
 The Monobuild automatically analyze your module for dependencies, and check dependencies for any version changes.
+
+### Use config
+
+Create .monobuild.yml in root directory of monorepo:
+
+```yaml
+packages:
+  packageA:
+    entry: cmd
+```
+
+And run any command:
+
+```shell script
+monobuild has-changes
+
+== Changes for packageA ==
+dependency file: /Users/valentin/goexample/packageB/greeting.go
+```
