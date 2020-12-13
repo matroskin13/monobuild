@@ -2,7 +2,7 @@
 
 A simple tool for GO monorepo:
 
-- Analyze application dependencies and build only changes packages (by git diff)
+- Analyze package dependencies (local files&go.mod) in monorepo, and report for changes (by git diff)
 - Automatically push changed packages to docker registry
 - (InProgress) Generate gitlab CI config
 - (InProgress) Watch mode for development
