@@ -3,6 +3,7 @@
 A simple tool for GO monorepo:
 
 - Automatically analyze package dependencies (local files&go.mod) in monorepo, and report for changes (by git diff)
+- Generate a template for your CI engine
 
 ## Install
 
