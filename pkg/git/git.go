@@ -1,13 +1,14 @@
 package git
 
 import (
+	"fmt"
 	"os/exec"
 	"path"
 	"strings"
 )
 
-func GetDiffFiles(repoPath string) ([]string, error) {
-	diff, err := getDiff(repoPath, "HEAD^", "HEAD")
+func GetDiffFiles(repoPath string, revision string) ([]string, error) {
+	diff, err := getDiff(repoPath, revision)
 	if err != nil {
 		return nil, err
 	}
@@ -19,6 +20,23 @@ func GetDiffFiles(repoPath string) ([]string, error) {
 	}
 
 	return diffWithFullPath, nil
+}
+
+func GetOldFile(repoPath string, file string, revision string) ([]byte, error) {
+	command := exec.Command("git", "show", fmt.Sprintf("%s:%s", revision, file))
+	command.Dir = repoPath
+
+	result, err := command.Output()
+	if err != nil {
+		ee, ok := err.(*exec.ExitError)
+		if ok {
+			return nil, fmt.Errorf("%s", string(ee.Stderr))
+		}
+
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func ResolveGitPath(dir string) (string, error) {
@@ -35,9 +53,9 @@ func rootPath(applicationPath string) (string, error) {
 	return strings.TrimSpace(string(resultPath)), nil
 }
 
-func getDiff(path string, first, second string) ([]string, error) {
+func getDiff(path string, first string) ([]string, error) {
 	// git diff HEAD^ HEAD
-	command := exec.Command("git", "diff", "--name-only", first, second)
+	command := exec.Command("git", "diff", "--name-only", first)
 	command.Dir = path
 	result, err := command.Output()
 	if err != nil {

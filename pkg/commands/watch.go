@@ -50,6 +50,7 @@ func GetWatch() *cobra.Command {
 				packName = packName
 
 				fullPathPackage := path.Join(applicationPath, packName, pack.Entry)
+				fmt.Println(deps.PackageChangeDeps(fullPathPackage, "HEAD"))
 
 				depsFiles, err := deps.GetDepsAsFiles(fullPathPackage)
 				if err != nil {

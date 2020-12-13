@@ -22,6 +22,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/stretchr/testify v1.4.0 // indirect
+	golang.org/x/mod v0.4.0
 	golang.org/x/tools v0.0.0-20201118030313-598b068a9102
 	google.golang.org/grpc v1.29.1 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
