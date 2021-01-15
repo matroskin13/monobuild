@@ -60,6 +60,13 @@ func setupConfigurationHook(cmd *cobra.Command) (*configuration, func(cmd *cobra
 					{FullEntry: fullModulePath},
 				},
 			}
+		} else {
+			_cfg, err := config.ParseDefaultConfig(applicationPath)
+			if err != nil {
+				return errors.NewRichError("Incorrect format of configuration file", err)
+			}
+
+			cfg = _cfg
 		}
 
 		repoPath, err := git.ResolveGitPath(applicationPath)
