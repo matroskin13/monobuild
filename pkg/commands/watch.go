@@ -49,7 +49,7 @@ func GetWatch() *cobra.Command {
 			for packName, pack := range cfg.Packages {
 				packName = packName
 
-				fullPathPackage := path.Join(applicationPath, packName, pack.Entry)
+				fullPathPackage := path.Join(applicationPath, pack.Entry)
 				fmt.Println(deps.PackageChangeDeps(fullPathPackage, "HEAD"))
 
 				depsFiles, err := deps.GetDepsAsFiles(fullPathPackage)
@@ -76,7 +76,7 @@ func GetWatch() *cobra.Command {
 							}
 						}
 
-						w := service.NewWriter(packName)
+						w := service.NewWriter(pack.Entry)
 						packageService, err := service.NewService(fullPathPackage, w)
 						if err != nil {
 							return err

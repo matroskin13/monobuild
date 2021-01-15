@@ -56,10 +56,8 @@ func setupConfigurationHook(cmd *cobra.Command) (*configuration, func(cmd *cobra
 			applicationPath = fullModulePath
 
 			cfg = &config.Config{
-				Packages: map[string]config.Package{
-					"package": {
-						FullEntry: fullModulePath,
-					},
+				Packages: []config.Package{
+					{FullEntry: fullModulePath},
 				},
 			}
 		}

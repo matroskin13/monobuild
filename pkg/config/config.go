@@ -12,7 +12,7 @@ import (
 const DefaultConfigName = ".monobuild.yml"
 
 type Config struct {
-	Packages map[string]Package
+	Packages []Package
 }
 
 type Package struct {

@@ -22,7 +22,7 @@ func GetBuild() *cobra.Command {
 		dock := build.NewDocker()
 
 		for packName, pack := range conf.cfg.Packages {
-			fullPathPackage := path.Join(conf.applicationPath, packName, pack.Entry)
+			fullPathPackage := path.Join(conf.applicationPath, pack.Entry)
 
 			depsFiles, err := deps.GetDepsAsFiles(fullPathPackage)
 			if err != nil {
@@ -39,7 +39,7 @@ func GetBuild() *cobra.Command {
 				fmt.Printf("Package %q has changed, build has started...\r\n", packName)
 
 				if pack.Build.Docker != nil {
-					if err := dock.Build(cmd.Context(), conf.applicationPath, path.Join(packName, pack.Entry), image); err != nil {
+					if err := dock.Build(cmd.Context(), conf.applicationPath, path.Join(pack.Entry), image); err != nil {
 						return fmt.Errorf("cannot build image: %w", err)
 					}
 

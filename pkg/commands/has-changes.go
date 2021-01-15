@@ -44,7 +44,7 @@ func GetHasChangesCommand() *cobra.Command {
 			fullPathPackage := pack.FullEntry
 
 			if fullPathPackage == "" {
-				fullPathPackage = path.Join(conf.applicationPath, packName, pack.Entry)
+				fullPathPackage = path.Join(conf.applicationPath, pack.Entry)
 			}
 
 			depsFiles, err := deps.GetDepsAsFiles(fullPathPackage)
@@ -70,7 +70,7 @@ func GetHasChangesCommand() *cobra.Command {
 					report = append(report, fmt.Sprintf("require package: %s", dep.Mod))
 				}
 
-				buildMap[packName] = report
+				buildMap[pack.Entry] = report
 
 				if useTemplate != "" {
 					tpl, err := template.New("").Parse(string(outTemplate))

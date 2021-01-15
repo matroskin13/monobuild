@@ -64,8 +64,7 @@ Create a .monobuild.yml in root directory of monorepo:
 
 ```yaml
 packages:
-  packageA:
-    entry: cmd
+  - entry: packageA/cmd
 ```
 
 And run any command:
