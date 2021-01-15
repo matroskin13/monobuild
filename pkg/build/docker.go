@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/matroskin13/monobuild/internal/tar"
 	"io"
 	"log"
-	"monobuild/internal/tar"
 )
 
 var defaultGoDockerfile = `FROM golang:1.13 as builder

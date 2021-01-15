@@ -2,10 +2,10 @@ package config
 
 import (
 	"fmt"
+	"github.com/matroskin13/monobuild/internal/errors"
+	"github.com/matroskin13/monobuild/internal/files"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"monobuild/internal/errors"
-	"monobuild/internal/files"
 	"path"
 )
 

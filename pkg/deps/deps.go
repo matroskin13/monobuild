@@ -2,10 +2,10 @@ package deps
 
 import (
 	"fmt"
+	"github.com/matroskin13/monobuild/pkg/git"
 	"golang.org/x/mod/modfile"
 	"golang.org/x/tools/go/packages"
 	"io/ioutil"
-	"monobuild/pkg/git"
 	"strings"
 )
 

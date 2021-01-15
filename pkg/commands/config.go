@@ -2,10 +2,10 @@ package commands
 
 import (
 	"fmt"
+	"github.com/matroskin13/monobuild/internal/errors"
+	"github.com/matroskin13/monobuild/pkg/config"
+	"github.com/matroskin13/monobuild/pkg/git"
 	"github.com/spf13/cobra"
-	"monobuild/internal/errors"
-	"monobuild/pkg/config"
-	"monobuild/pkg/git"
 	"os"
 	"path"
 	"strings"

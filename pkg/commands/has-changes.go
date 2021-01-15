@@ -3,12 +3,12 @@ package commands
 import (
 	"bytes"
 	"fmt"
+	"github.com/matroskin13/monobuild/internal/errors"
+	"github.com/matroskin13/monobuild/internal/slice"
+	"github.com/matroskin13/monobuild/pkg/deps"
 	"github.com/spf13/cobra"
 	"html/template"
 	"io/ioutil"
-	"monobuild/internal/errors"
-	"monobuild/internal/slice"
-	"monobuild/pkg/deps"
 	"path"
 )
 

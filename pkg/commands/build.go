@@ -2,11 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"github.com/matroskin13/monobuild/internal/env"
+	"github.com/matroskin13/monobuild/internal/slice"
+	"github.com/matroskin13/monobuild/pkg/build"
+	"github.com/matroskin13/monobuild/pkg/deps"
 	"github.com/spf13/cobra"
-	"monobuild/internal/env"
-	"monobuild/internal/slice"
-	"monobuild/pkg/build"
-	"monobuild/pkg/deps"
 	"path"
 )
 

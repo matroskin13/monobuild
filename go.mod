@@ -1,4 +1,4 @@
-module monobuild
+module github.com/matroskin13/monobuild
 
 go 1.14
 
